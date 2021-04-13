@@ -1,22 +1,29 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
+from . monnify_details import getlive
 
-def getlive(live):
-    if live == True:
-        return 'https://sandbox.monnify.com'
-    elif live == False:
-        return 'https://sandbox.monnify.com'
-    else:
-        return 'live can either be True or False'
+
+def monnifyCredential(api_key, secret_key, contract, walletId, is_live):
+    credentials = {
+        'api_key': api_key, 
+        'secret_key': secret_key, 
+        'contract': contract,
+        'walletId': walletId,
+        'is_live': is_live
+        }
+    return credentials
 __name__ == "__main__"
 
 
 
-def Authenticate(username, password, live):
 
+def get_token(credentials):
+    live = credentials['is_live']
     if live == True or live == False:
         baseurl = getlive(live)
+        username = credentials['api_key']
+        password = credentials['secret_key']
         response = requests.post(f'{baseurl}/api/v1/auth/login', 
         auth=HTTPBasicAuth(username, password))
 
@@ -30,29 +37,30 @@ __name__ == "__main__"
 
 
 
+def VerifyAccount(credentials, accountNumber, bankCode):
+    live = credentials['is_live']
+    if live == True or live == False:
+        baseurl = getlive(live)
+        url = f'{baseurl}/api/v1/disbursements/account/validate?accountNumber={accountNumber}&bankCode={bankCode}'
 
+        payload = {}
+        headers= {}
+
+        response = requests.request("GET", url, headers=headers, data = payload)
+
+        r_dict = json.loads(response.text)
+        return r_dict
+    else:
+        return getlive(live)
+__name__ == "__main__"
 
 class Monnify:
 
 
-    def VerifyAccount(self, accountNumber, bankCode, live):
+    def reserve_account(self,token, credentials, accountReference,  accountName, customerEmail, customerName, customerBvn, availableBank):
+        live = credentials['is_live']
         if live == True or live == False:
-            baseurl = getlive(live)
-            url = f'{baseurl}/api/v1/disbursements/account/validate?accountNumber={accountNumber}&bankCode={bankCode}'
-
-            payload = {}
-            headers= {}
-
-            response = requests.request("GET", url, headers=headers, data = payload)
-
-            r_dict = json.loads(response.text)
-            return r_dict
-        else:
-            return getlive(live)
-
-
-    def ReserveAccount(self,token, accountReference,  accountName, contractCode, customerEmail, customerName, live):
-        if live == True or live == False:
+            contractCode = credentials['contract']
             baseurl = getlive(live)
             url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts'
             payload = {
@@ -60,8 +68,10 @@ class Monnify:
                 "accountName": accountName,
                 "currencyCode": "NGN",
                 "contractCode": contractCode,
-                "customerEmail": customerEmail, 
-                "customerName": customerName 
+                "customerEmail": customerEmail,
+                "bvn": customerBvn, 
+                "customerName": customerName,
+                "getAllAvailableBanks": availableBank
                 }
             headers = {
                 'Content-Type': 'application/json',
@@ -70,29 +80,109 @@ class Monnify:
 
             response = requests.request("POST", url, headers=headers, data = json.dumps(payload))
 
-            #print(response.text.encode('utf8'))
             r_dict = json.loads(response.text)
             return r_dict
         else:
             return getlive(live)
-
-
-    def Disbursement(self, api_key, secret_key, amount, reference, narration, bankCode, accountNumber, walletId, live):
+    
+    
+    def add_link_account(self, token, credentials, accountReference, getAllAvailableBanks, preferredBanks):
+        live = credentials['is_live']
         if live == True or live == False:
             baseurl = getlive(live)
-            username = api_key
-            password = secret_key
-            url = f'{baseurl}/api/v1/disbursements/single'
-
+            url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/add-linked-accounts/{accountReference}'
             payload = {
-                'amount': amount,
+                "getAllAvailableBanks": getAllAvailableBanks,
+                "preferredBanks": preferredBanks
+            }
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("PUT", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    def update_bvn_reserve(self, token, credentials, bvn, accountReference):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/update-customer-bvn/{accountReference}'
+            payload = {
+                "bvn": bvn
+            }
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("PUT", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    def deallocate_account(self, token, credentials, accountNumber):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/{accountNumber}'
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("DELETE", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+        
+    
+    def transactions(self, token, credentials, accountReference, page, size):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/transactions?accountReference={accountReference}&page={page}&size={size}'
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+    
+    
+    def tranfer(self,credentials, amount, reference, narration, bankCode, accountNumber):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            walletId = credentials['walletId']
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/single'
+            
+            f_amount = float(amount)
+            payload = {
+                'amount': f_amount,
                 'reference': reference,
                 'narration': narration,
                 'bankCode': bankCode,
                 'accountNumber': accountNumber,
                 'currency': 'NGN',
                 'walletId': walletId
-                }
+            }
             headers = {
                 'Content-Type': 'application/json'
             }
@@ -103,4 +193,356 @@ class Monnify:
             return r_dict
         else:
             return getlive(live)
+        
+        
+        
+    
+    def authorize_tranfer(self,credentials, reference, authorizationCode):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/single/validate-otp'
+        
+            payload = {
+                "reference": reference,
+                "authorizationCode": authorizationCode
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
 
+            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+        
+    
+    def resend_otp(self,credentials, reference):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/single/resend-otp'
+        
+            payload = {
+                "reference": reference
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    def get_transfer_details(self,credentials, reference):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/single/summary?reference={reference}'
+        
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("GET", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+        
+        
+    def get_all_single_transfer(self,credentials, pageSize, pageNo):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/single/transactions?pageSize={pageSize}&pageNo={pageNo}'
+        
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("GET", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def get_wallet_balance(self,credentials):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            walletId = credentials['walletId']
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/disbursements/wallet-balance?walletId={walletId}'
+        
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("GET", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def create_invoice(self, credentials, amount, invoiceReference, description, customerEmail, customerName, expiryDate, paymentMethods, redirectUrl):
+        
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            contractCode = credentials['contract']
+            url = f'{baseurl}/api/v1/invoice/create'
+            
+            payload = {
+                "amount": amount,
+                "invoiceReference": invoiceReference,
+                "description": description,
+                "currencyCode": "NGN",
+                "contractCode": contractCode,
+                "customerEmail": customerEmail,
+                "customerName": customerName,
+                "expiryDate": expiryDate,
+                "paymentMethods": paymentMethods,
+                
+                "redirectUrl": redirectUrl
+            }
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+    
+    
+    def initiate_refund(self, token, credentials, refundReference, transactionReference, refundAmount, refundReason, customerNote):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/refunds/initiate-refund'
+            payload = {
+                "refundReference": refundReference,
+                "transactionReference": transactionReference,
+                "refundAmount": refundAmount,
+                "refundReason": refundReason,
+                "customerNote": customerNote
+            }
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("POST", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+    
+    
+    def get_refund_status(self, token, credentials, transactionReference,):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/refunds/{transactionReference}'
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def get_all_refund(self, token, credentials, page, size):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/refunds?page={page}&size={size}'
+            payload = {}
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': token
+                }
+
+            response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def create_sub_account(self, credentials, bankCode, accountNumber, email, splitPercentage):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/sub-accounts'
+
+            payload = json.dumps([
+                {
+                    "currencyCode": "NGN",
+                    "bankCode": bankCode,
+                    "accountNumber": accountNumber,
+                    "email": email,
+                    "defaultSplitPercentage": splitPercentage
+                }
+            ])
+                                  
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = payload)
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+        
+        
+    def get_sub_account(self, credentials):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/sub-accounts'
+
+            payload = {}
+                                  
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("GET", url, auth=HTTPBasicAuth(username, password), headers=headers, data = payload)
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def update_sub_account(self, credentials, subAccountCode, bankCode, accountNumber, email, splitPercentage):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/sub-accounts'
+
+            payload = {
+                "subAccountCode": subAccountCode,
+                "currencyCode": "NGN",
+                "bankCode": bankCode,
+                "accountNumber": accountNumber,
+                "email": email,
+                "defaultSplitPercentage": splitPercentage
+            }               
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("PUT", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+    
+    
+    def delete_sub_account(self, credentials, subAccountCode):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            url = f'{baseurl}/api/v1/sub-accounts/{subAccountCode}'
+
+            payload = {}               
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("DELETE", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        
+        
+        
+    
+    def one_time_payment(self, credentials, amount, customerName, customerEmail, paymentReference, paymentDescription, redirectUrl, paymentMethods):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            username = credentials['api_key']
+            password = credentials['secret_key']
+            contractCode = credentials['contract']
+            url = f'{baseurl}/api/v1/merchant/transactions/init-transaction'
+            famount = float(amount)
+            payload = {
+                "amount": famount,
+                "customerName": customerName,
+                "customerEmail": customerEmail,
+                "paymentReference": paymentReference,
+                "paymentDescription": paymentDescription,
+                "currencyCode": "NGN",
+                "contractCode":contractCode,
+                "redirectUrl": redirectUrl,
+                "paymentMethods": paymentMethods
+            }               
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
+        

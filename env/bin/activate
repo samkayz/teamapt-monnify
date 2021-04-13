@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/apple/Documents/Project/monnify/env"
+VIRTUAL_ENV="/Users/ittrade/PycharmProjects/monnify/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
