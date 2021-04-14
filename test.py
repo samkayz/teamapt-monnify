@@ -13,8 +13,8 @@ login_credential = monnifyCredential(api_key, secret_key, contractCode, walletId
 token = get_token(login_credential)
 # print(token)
 
-# create_invoice = invoice.create_invoice(login_credential, amount='1000', invoiceReference='666377266372', description='test invoice', customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD'], redirectUrl='')
-# print(create_invoice)
+create_invoice = reserve.create_invoice(login_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], redirectUrl='')
+print(create_invoice)
 
 # bank_verify = VerifyAccount(login_credential, accountNumber='0020657879', bankCode='044')
 # print(bank_verify)
@@ -78,5 +78,5 @@ token = get_token(login_credential)
 # walletBal = reserve.get_wallet_balance(login_credential)
 # print(walletBal)
 
-bank = reserve.verify_account(login_credential, accountNumber='2211440871', bankCode='057')
-print(bank)
+# bank = reserve.verify_account(login_credential, accountNumber='2211440871', bankCode='057')
+# print(bank)

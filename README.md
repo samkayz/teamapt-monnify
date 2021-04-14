@@ -56,6 +56,36 @@ After successfull installation, we can now use the package in our development by
                 'bankCode': '057'
               }
             }
+          
+          2 CREATE INVOICE
+
+            create_invoice = reserve.create_invoice(login_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
+            customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], redirectUrl='http://abc.com')
+            print(create_invoice)
+
+            {
+              'requestSuccessful': True, 
+              'responseMessage': 'success', 
+              'responseCode': '0', 
+              'responseBody': {
+                'amount': 1000, 
+                'invoiceReference': 'uueyyws', 
+                'invoiceStatus': 'PENDING', 
+                'description': 'test invoice', 
+                'contractCode': '2917634883', 
+                'customerEmail': 'test@gmail.com', 
+                'customerName': 'Samson', 
+                'expiryDate': '2021-04-30 12:00:00', 
+                'createdBy': 'MK_TEST_8UBXGKTFSB', 
+                'createdOn': '2021-04-14 15:18:31', 
+                'checkoutUrl': 'https://sandbox.sdk.monnify.com/checkout/MNFY|63|20210414151813|000197', 
+                'accountNumber': '3000041788', 
+                'accountName': 'tes', 
+                'bankName': 'Wema bank', 
+                'bankCode': '035', 
+                'redirectUrl': 'http://abc.com'
+              }
+            }
 
 
 
