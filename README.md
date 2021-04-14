@@ -1,5 +1,5 @@
                                   MONNIFY PYTHON LIBRARY USER GUIDE
-                                      Version 1.0.0
+                                            Version 1.0.0
 
 Monnify is one of the products of TeamApt <https://www.teamapt.com/> . Monnify empowers businesses in the formal & informal sectors with the right tools & solutions to manage their finances and grow their businesses. Businesses in the formal economy benefit from our payment infrastructure that simplifies how they accept, manage and make payments. While smaller-scale businesses and entrepreneurs benefit from our market-community focused products that give them accessible, affordable and convenient short term working capital.
 
