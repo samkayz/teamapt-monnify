@@ -5,11 +5,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="monnify", # Replace with your own username
-    version="0.1.1",
+    name="teamapt-monnify", # Replace with your own username
+    version="1.0.0",
     author="Samson Ilemobayo",
     author_email="ilemobayosamson@gmail.com",
-    description="A small bank algorithm that predict nigeria bank",
+    description="TeamApt Monnify Python Library Perform Smooth Transaction",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/samkayz/teamapt-monnify.git",

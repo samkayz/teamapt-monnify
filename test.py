@@ -1,13 +1,11 @@
-from monnify.monnify import *
+from monnify.monnify import monnifyCredential, get_token, Monnify
 
 reserve = Monnify()
 
-baseurl = "https://sandbox.monnify.com"
 api_key = "MK_TEST_8UBXGKTFSB"
 secret_key = "ENRC4FDYKSTUYQKA53YPXBFLUFXWYHG2"
 contractCode = '2917634474'
 walletId = '654CAB2118124760A659C787B2AA38E8'
-walletAccountNumber = '3993787412'
 
 
 login_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
@@ -77,5 +75,8 @@ token = get_token(login_credential)
 # print(get_all_single)
 
 
-walletBal = reserve.get_wallet_balance(login_credential)
-print(walletBal)
+# walletBal = reserve.get_wallet_balance(login_credential)
+# print(walletBal)
+
+bank = reserve.verify_account(login_credential, accountNumber='2211440871', bankCode='057')
+print(bank)

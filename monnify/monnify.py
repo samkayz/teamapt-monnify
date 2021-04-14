@@ -1,8 +1,17 @@
+## This code is developed by Samson Ilemobayo.
+## Software Developer and Fintech Advocate
+## Email: ilemobayosamson@gmail.com
+
 import requests
 import json
 from requests.auth import HTTPBasicAuth
 from . monnify_details import getlive
 
+
+
+## Funtction that get all the Monnify Credentials.
+## The credential is then use to authenticate all 
+## the Endpoint for Use
 
 def monnifyCredential(api_key, secret_key, contract, walletId, is_live):
     credentials = {
@@ -17,6 +26,8 @@ __name__ == "__main__"
 
 
 
+### Function that send a request to the Authentication endpoint and 
+### get the Toking and retun the token for use
 
 def get_token(credentials):
     live = credentials['is_live']
@@ -36,27 +47,38 @@ def get_token(credentials):
 __name__ == "__main__"
 
 
-
-def VerifyAccount(credentials, accountNumber, bankCode):
-    live = credentials['is_live']
-    if live == True or live == False:
-        baseurl = getlive(live)
-        url = f'{baseurl}/api/v1/disbursements/account/validate?accountNumber={accountNumber}&bankCode={bankCode}'
-
-        payload = {}
-        headers= {}
-
-        response = requests.request("GET", url, headers=headers, data = payload)
-
-        r_dict = json.loads(response.text)
-        return r_dict
-    else:
-        return getlive(live)
-__name__ == "__main__"
-
+## class that handle all the function and endpoint of monnify.
 class Monnify:
+    
+    
+    ## This is the endpoint that verify bank account and it take value of the merchant credentials
+    ## account number to be verify and the bank code of the bank. this endpoint will run a check to
+    ## verify whether the bank account number is valid by returning the name registered with the 
+    ## account number.
+    
+    def verify_account(self, credentials, accountNumber, bankCode):
+        live = credentials['is_live']
+        if live == True or live == False:
+            baseurl = getlive(live)
+            url = f'{baseurl}/api/v1/disbursements/account/validate?accountNumber={accountNumber}&bankCode={bankCode}'
+
+            payload = {}
+            headers= {}
+
+            response = requests.request("GET", url, headers=headers, data = payload)
+
+            r_dict = json.loads(response.text)
+            return r_dict
+        else:
+            return getlive(live)
 
 
+    ## This function is use to reserve virtual account on the monnify platform.
+    ## It take Auth Token, merchant credentials, account reference, accoun name,
+    ## customer email, customer name, customer BVN, and available bank. this 
+    ## endpoint will then create a virtual account number in the name of customer
+    ## suplied and return the details of the account created.
+     
     def reserve_account(self,token, credentials, accountReference,  accountName, customerEmail, customerName, customerBvn, availableBank):
         live = credentials['is_live']
         if live == True or live == False:
