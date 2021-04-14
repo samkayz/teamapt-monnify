@@ -34,12 +34,15 @@ After successfull installation, we can now use the package in our development by
 
             merchant_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
 
+            NOTE: If you are in sandbox please is_live = False and can only be set to True when you are in 
+                  production and make sure you change credentials to live credentials
+
             token = get_token(merchant_credential)
 
 
 
           1.VERIFY BANK ACCOUNT
-                                              
+
             bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
             print(bank)
 
