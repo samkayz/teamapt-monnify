@@ -17,6 +17,32 @@ Before you can start integrating to Monnify, you will need to sign up on Monnify
 All this can be seen on the setting area when you login to you logged in.
 
 
+                                            API ENDPOINT IN THE LIBRARY
+                                            
+1. monnifyCredential
+2. get_token
+3. verify_account
+4. reserve_account
+5. add_link_account
+6. update_bvn_reserve
+7. deallocate_account
+8. transactions
+9. tranfer
+10. authorize_tranfer
+11. resend_otp
+12. get_transfer_details
+13. get_all_single_transfer
+14. get_wallet_balance
+15. create_invoice
+17. initiate_refund
+18. get_refund_status
+19. get_all_refund
+20. create_sub_account
+21. get_sub_account
+22. update_sub_account
+23. delete_sub_account
+24. one_time_payment
+
                                             HOW TO USE THE LIBRARY
 To use the library, we have to use package installer (pip) by running: pip install teamapt-monnify
 
@@ -232,6 +258,22 @@ After successfull installation, we can now use the package in our development by
             }
 
             NOTE: Any Account deallocated/delete can not be reversed.
+          
+          7 TRANSFER: This is use to initiate transfer to bank
+
+            transfer = monnify.tranfer(merchant_credential, amount='1000', reference='66635525', narration='Test Transfer', bankCode='044', accountNumber='0020657659')
+            print(transfer)
+
+
+            {
+              "amount": 1000,
+              "reference":"66635525",
+              "narration":"Test Transfer",
+              "destinationBankCode": "044",
+              "destinationAccountNumber": "0020657659",
+              "currency": "NGN",
+              "sourceAccountNumber": "9624937372"
+            }
 
 
 
