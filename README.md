@@ -41,7 +41,7 @@ After successfull installation, we can now use the package in our development by
 
 
 
-          1.VERIFY BANK ACCOUNT
+          1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
 
             bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
             print(bank)
@@ -57,9 +57,11 @@ After successfull installation, we can now use the package in our development by
               }
             }
           
-          2 CREATE INVOICE
+          2 INVOICE - Monnify invoicing allows you generate invoices via APIs. For each invoice, 
+                      a virtual account number will be generated and tied to that invoice so your 
+                      customers can simply transfer to that account number to pay
 
-            create_invoice = monnify.create_invoice(login_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
+            create_invoice = monnify.create_invoice(merchant_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
             customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], 
             redirectUrl='http://abc.com')
             print(create_invoice)
@@ -87,6 +89,149 @@ After successfull installation, we can now use the package in our development by
                 'redirectUrl': 'http://abc.com'
               }
             }
+
+          3 RESERVE ACCOUNT - Reserved account APIs enable merchants create accounts that can be dedicated 
+                              to each of their customers. Once any payment is done to that account, we 
+                              notify your webhook with the payment information
+
+
+            reserve_account = monnify.reserve_account(token, merchant_credential, accountReference='tw663552ppw', accountName='Test Account', 
+            customerEmail='test2@gmail.com', customerName="Test Account", customerBvn='66377273233', availableBank=True)
+            print(reserve_account)
+
+            {
+              'requestSuccessful': True, 
+              'responseMessage': 'success', 
+              'responseCode': '0', 
+              'responseBody': {
+                'contractCode': '2917634883', 
+                'accountReference': 'tw663552ppw', 
+                'accountName': 'Tes', 
+                'currencyCode': 'NGN', 
+                'customerEmail': 
+                'test2@gmail.com', 
+                'customerName': 'Test Account', 
+                'accountNumber': '3000041799', 
+                'bankName': 'Wema bank', 
+                'bankCode': '035', 
+                'collectionChannel': 'RESERVED_ACCOUNT', 
+                'reservationReference': 'CHVQBNP3DRTGU6CZFXQW', 
+                'reservedAccountType': 'GENERAL', 
+                'status': 'ACTIVE', 
+                'createdOn': '2021-04-14 15:29:51.976', 
+                'incomeSplitConfig': [], 
+                'bvn': '66377273233', 
+                'restrictPaymentSource': False
+              }
+            }
+
+            NOTE: When the availableBank is set to True,random account number amount there partner bank will be reserved. if you want to
+                  to reserved you choice of bank e.g WEMA, you have to set the availableBank to the code of the bank you wish to reserve.
+                  i.e availableBank='035'. available partner bank codes are (Rolez MFB = 50515, Wema Bank = 035, Sterling Bank = 232)
+
+          
+          4 ADD LINK ACCOUNT - This API allows you to add accounts with another partner bank and link to an existing customer 
+                              with the customer's account reference.
+
+
+            link_account = monnify.add_link_account(token, merchant_credential, accountReference='tw663552', getAllAvailableBanks=True, preferredBanks=['035'])
+            print(link_account)
+
+            {
+              "requestSuccessful": true,
+              "responseMessage": "success",
+              "responseCode": "0",
+              "responseBody": {
+                  "contractCode": "915483727511",
+                  "accountReference": "121615386005862",
+                  "accountName": "reservedAccountName",
+                  "currencyCode": "NGN",
+                  "customerEmail": "nnaemekapaschal@gmail.com",
+                  "customerName": "Pascool",
+                  "accounts": [
+                      {
+                        "bankCode": "035",
+                        "bankName": "WEMA Bank",
+                        "accountNumber": "XXXX123456"
+                      },
+                      {
+                        "bankCode": "50515",
+                        "bankName": "ROLEZ MFB",
+                        "accountNumber": "XXXX123456"
+                      },
+                      {
+                        "bankCode": "123",
+                        "bankName": "Bank 3",
+                        "accountNumber": "XXXX123456"
+                      }
+                  ],
+                  "collectionChannel": "RESERVED_ACCOUNT",
+                  "reservationReference": "8MHKXZS8GCEPVXB59ML6",
+                  "reservedAccountType": "GENERAL",
+                  "status": "ACTIVE",
+                  "createdOn": "2021-03-10 15:20:07.0",
+                  "restrictPaymentSource": false
+              }
+            }
+
+            NOTE: If getAllAvailableBanks is set to true, then an account with all available banks not yet linked will be added. 
+            Set getAllAvailableBanks to false if you want to specify preferred banks to reserve accounts with. set to true if 
+            you want to add all other available partner bank accounts to your reserved account.
+
+          5 UPDATE BVN FOR RESERVE ACCOUNT - This Function is to be used to update a customer's BVN mapped to a Reserved Account.
+
+            update_bvn = monnify.update_bvn_reserve(token, merchant_credential, bvn='66377283884', accountReference='635525663623')
+            print(update_bvn)
+
+            {
+              "requestSuccessful": true,
+              "responseMessage": "success",
+              "responseCode": "0",
+              "responseBody": {
+                "contractCode": "2917634883",
+                "accountReference": "635525663623",
+                "currencyCode": "NGN",
+                "customerEmail": "testuser@test.com",
+                "customerName": "Test Oj",
+                "accountNumber": "4290733572",
+                "bankName": "Wema Bank",
+                "bankCode": "035",
+                "collectionChannel": "RESERVED_ACCOUNT",
+                "reservationReference": "R8J4LCW3P82WN4X6LQCW",
+                "reservedAccountType": "GENERAL",
+                "status": "ACTIVE",
+                "createdOn": "2021-02-01 21:40:55.0",
+                "bvn": "66377283884",
+                "restrictPaymentSource": false
+              }
+           }
+          
+          6 DEALLOCATE RESERVE ACCOUNT: This is used to deallocate/delete reserved account.
+
+            delete_account = monnify.deallocate_account(token, merchant_credential, accountNumber='3000041799')
+            print(delete_account)
+
+
+            {
+              "requestSuccessful": true,
+              "responseMessage": "success",
+              "responseCode": "0",
+              "responseBody": {
+                  "contractCode": "797854529434",
+                  "accountReference": "reference12345#",
+                  "accountName": "Test Reserved Account",
+                  "currencyCode": "NGN",
+                  "customerEmail": "test@tester.com",
+                  "accountNumber": "3000041799",
+                  "bankName": "Wema bank",
+                  "bankCode": "035",
+                  "reservationReference": "NRF72EMEBCGNN6WUKD35",
+                  "status": "ACTIVE",
+                  "createdOn": "2021-04-14 17:05:50.0"
+                }
+            }
+
+            NOTE: Any Account deallocated/delete can not be reversed.
 
 
 
