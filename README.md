@@ -59,8 +59,9 @@ After successfull installation, we can now use the package in our development by
           
           2 CREATE INVOICE
 
-            create_invoice = reserve.create_invoice(login_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
-            customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], redirectUrl='http://abc.com')
+            create_invoice = monnify.create_invoice(login_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
+            customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], 
+            redirectUrl='http://abc.com')
             print(create_invoice)
 
             {
