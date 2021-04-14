@@ -36,8 +36,10 @@ After successfull installation, we can now use the package in our development by
 
             token = get_token(merchant_credential)
 
-                  VERIFY BANK ACCOUNT
-                                                        
+
+
+          1.VERIFY BANK ACCOUNT
+                                              
             bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
             print(bank)
 
