@@ -58,7 +58,13 @@ After successfull installation, we can now use the package in our development by
             contractCode = '2917634883'
             walletId = '654CAB211YY36760A659C787B2AA38E8'
 
-            merchant_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
+            merchant_credential = monnifyCredential(
+              api_key, 
+              secret_key, 
+              contractCode, 
+              walletId, 
+              is_live=False
+              )
 
             token = get_token(merchant_credential)
 
