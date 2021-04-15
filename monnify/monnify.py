@@ -168,7 +168,7 @@ class Monnify:
         
         
     
-    def transactions(self, token, credentials, accountReference, page, size):
+    def reserve_account_transactions(self, token, credentials, accountReference, page, size):
         live = credentials['is_live']
         if live == True or live == False:
             baseurl = getlive(live)

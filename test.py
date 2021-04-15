@@ -32,7 +32,7 @@ token = get_token(login_credential)
 # delete_account = reserve.deallocate_account(token, login_credential, accountNumber='3000040408')
 # print(delete_account)
 
-# alltrans = reserve.transactions(token, login_credential, accountReference='08039440154', page=0, size=10)
+# alltrans = reserve.reserve_account_transactions(token, login_credential, accountReference='08039440154', page=0, size=10)
 # print(alltrans)
 
 # refund_money = refund.initiate_refund(token, login_credential, refundReference='6637whhhwe', transactionReference='MNFY|63|20210413134205|000113', refundAmount='1000.0', refundReason='Order cancelled!', customerNote='Canceled')
@@ -71,8 +71,8 @@ token = get_token(login_credential)
 # get_transfer = reserve.get_transfer_details(login_credential, reference='66635525')
 # print(get_transfer)
 
-# get_all_single = reserve.get_all_single_transfer(login_credential, pageSize=5, pageNo=1)
-# print(get_all_single)
+get_all_single = reserve.get_all_single_transfer(login_credential, pageSize=5, pageNo=1)
+print(get_all_single)
 
 
 # walletBal = reserve.get_wallet_balance(login_credential)
