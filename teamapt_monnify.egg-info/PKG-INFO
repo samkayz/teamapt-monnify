@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: teamapt-monnify
 Version: 1.0.0
-Summary: TeamApt Monnify Python Library Perform Smooth Transaction
+Summary: TeamApt Monnify Python Library
 Home-page: https://github.com/samkayz/teamapt-monnify.git
 Author: Samson Ilemobayo
 Author-email: ilemobayosamson@gmail.com
@@ -66,7 +66,13 @@ Description:                                   MONNIFY PYTHON LIBRARY USER GUIDE
                     contractCode = '2917634883'
                     walletId = '654CAB211YY36760A659C787B2AA38E8'
         
-                    merchant_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
+                    merchant_credential = monnifyCredential(
+                      api_key, 
+                      secret_key, 
+                      contractCode, 
+                      walletId, 
+                      is_live=False
+                      )
         
                     token = get_token(merchant_credential)
         
@@ -76,7 +82,11 @@ Description:                                   MONNIFY PYTHON LIBRARY USER GUIDE
         
         1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
         
-                    bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
+                    bank = monnify.verify_account(
+                      merchant_credential, 
+                      accountNumber='2213324087', 
+                      bankCode='057'
+                      )
                     print(bank)
         
                     {
@@ -802,7 +812,7 @@ Description:                                   MONNIFY PYTHON LIBRARY USER GUIDE
                       }
         
         
-        These are the endpoint for casual transactions and some of the are still not been developed which i will included in next version. i will also be including some new enhancement to the library for smooth financial transactions.
+        These are the endpoint for casual transactions and some of endnpoint are yet to developed which i will included in next version. i will also be including some new enhancement to the library for smooth financial transactions.
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
