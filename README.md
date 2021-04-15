@@ -67,7 +67,7 @@ After successfull installation, we can now use the package in our development by
 
 
 
-          1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
+1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
 
             bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
             print(bank)
@@ -83,9 +83,7 @@ After successfull installation, we can now use the package in our development by
               }
             }
           
-          2 INVOICE - Monnify invoicing allows you generate invoices via APIs. For each invoice, 
-                      a virtual account number will be generated and tied to that invoice so your 
-                      customers can simply transfer to that account number to pay
+2 INVOICE - Monnify invoicing allows you generate invoices via APIs. For each invoice, a virtual account number will be generated and tied to that invoice so your customers can simply transfer to that account number to pay
 
             create_invoice = monnify.create_invoice(merchant_credential, amount='1000', invoiceReference='uueyyws', description='test invoice', 
             customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-04-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], 
@@ -116,9 +114,7 @@ After successfull installation, we can now use the package in our development by
               }
             }
 
-          3 RESERVE ACCOUNT - Reserved account APIs enable merchants create accounts that can be dedicated 
-                              to each of their customers. Once any payment is done to that account, we 
-                              notify your webhook with the payment information
+3 RESERVE ACCOUNT - Reserved account APIs enable merchants create accounts that can be dedicated to each of their customers. Once any payment is done to that account, we notify your webhook with the payment information
 
 
             reserve_account = monnify.reserve_account(token, merchant_credential, accountReference='tw663552ppw', accountName='Test Account', 
@@ -151,13 +147,10 @@ After successfull installation, we can now use the package in our development by
               }
             }
 
-            NOTE: When the availableBank is set to True,random account number amount there partner bank will be reserved. if you want to
-                  to reserved you choice of bank e.g WEMA, you have to set the availableBank to the code of the bank you wish to reserve.
-                  i.e availableBank='035'. available partner bank codes are (Rolez MFB = 50515, Wema Bank = 035, Sterling Bank = 232)
+NOTE: When the availableBank is set to True,random account number amount there partner bank will be reserved. if you want to reserved you choice of bank e.g WEMA, you have to set the availableBank to the code of the bank you wish to reserve i.e availableBank='035'. available partner bank codes are (Rolez MFB = 50515, Wema Bank = 035, Sterling Bank = 232)
 
           
-          4 ADD LINK ACCOUNT - This API allows you to add accounts with another partner bank and link to an existing customer 
-                              with the customer's account reference.
+4 ADD LINK ACCOUNT - This API allows you to add accounts with another partner bank and link to an existing customer with the customer's account reference.
 
 
             link_account = monnify.add_link_account(token, merchant_credential, accountReference='tw663552', getAllAvailableBanks=True, preferredBanks=['035'])
@@ -200,11 +193,9 @@ After successfull installation, we can now use the package in our development by
               }
             }
 
-            NOTE: If getAllAvailableBanks is set to true, then an account with all available banks not yet linked will be added. 
-            Set getAllAvailableBanks to false if you want to specify preferred banks to reserve accounts with. set to true if 
-            you want to add all other available partner bank accounts to your reserved account.
+NOTE: If getAllAvailableBanks is set to true, then an account with all available banks not yet linked will be added. Set getAllAvailableBanks to false if you want to specify preferred banks to reserve accounts with. set to true if you want to add all other available partner bank accounts to your reserved account.
 
-          5 UPDATE BVN FOR RESERVE ACCOUNT - This Function is to be used to update a customer's BVN mapped to a Reserved Account.
+5 UPDATE BVN FOR RESERVE ACCOUNT - This Function is to be used to update a customer's BVN mapped to a Reserved Account.
 
             update_bvn = monnify.update_bvn_reserve(token, merchant_credential, bvn='66377283884', accountReference='635525663623')
             print(update_bvn)
@@ -232,7 +223,7 @@ After successfull installation, we can now use the package in our development by
               }
            }
           
-          6 DEALLOCATE RESERVE ACCOUNT: This is used to deallocate/delete reserved account.
+6 DEALLOCATE RESERVE ACCOUNT: This is used to deallocate/delete reserved account.
 
             delete_account = monnify.deallocate_account(token, merchant_credential, accountNumber='3000041799')
             print(delete_account)
@@ -257,9 +248,9 @@ After successfull installation, we can now use the package in our development by
                 }
             }
 
-            NOTE: Any Account deallocated/delete can not be reversed.
+NOTE: Any Account deallocated/delete can not be reversed.
           
-          7 TRANSFER: This is use to initiate transfer to bank
+7 TRANSFER: This is use to initiate transfer to bank
 
             transfer = monnify.tranfer(merchant_credential, amount='1000', reference='66635525', narration='Test Transfer', bankCode='044', accountNumber='0020657659')
             print(transfer)
