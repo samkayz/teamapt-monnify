@@ -5,7 +5,7 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
-from . monnify_details import getlive
+from . getlive import getlive
 
 
 

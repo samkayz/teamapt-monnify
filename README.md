@@ -68,7 +68,11 @@ NOTE: If you are in sandbox please is_live = False and can only be set to True w
 
 1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
 
-            bank = monnify.verify_account(merchant_credential, accountNumber='2213324087', bankCode='057')
+            bank = monnify.verify_account(
+              merchant_credential, 
+              accountNumber='2213324087', 
+              bankCode='057'
+              )
             print(bank)
 
             {
@@ -794,4 +798,4 @@ NOTE: Any Account deallocated/delete can not be reversed.
               }
 
 
-These are the endpoint for casual transactions and some of the are still not been developed which i will included in next version. i will also be including some new enhancement to the library for smooth financial transactions.
+These are the endpoint for casual transactions and some of endnpoint are yet to developed which i will included in next version. i will also be including some new enhancement to the library for smooth financial transactions.
