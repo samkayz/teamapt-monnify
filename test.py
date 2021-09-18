@@ -8,7 +8,7 @@ contractCode = '2917634474'
 walletId = '654CAB2118124760A659C787B2AA38E8'
 
 
-login_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
+login_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=000)
 # print(login_credential)
 token = get_token(login_credential)
 # print(token)

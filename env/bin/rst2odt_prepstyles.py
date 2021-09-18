@@ -1,4 +1,4 @@
-#!/Users/ittrade/PycharmProjects/monnify/env/bin/python3
+#!/Users/olaonipekun/Documents/PythonWork/teamapt/env/bin/python3.9
 
 # $Id: rst2odt_prepstyles.py 8346 2019-08-26 12:11:32Z milde $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

@@ -5,46 +5,74 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
-from . getlive import getlive
+from . getlive import GetBaseUrl
 
-
-
+    
 ## Funtction that get all the Monnify Credentials.
 ## The credential is then use to authenticate all 
 ## the Endpoint for Use
 
-def monnifyCredential(api_key, secret_key, contract, walletId, is_live):
-    credentials = {
-        'api_key': api_key, 
-        'secret_key': secret_key, 
-        'contract': contract,
-        'walletId': walletId,
-        'is_live': is_live
-        }
-    return credentials
-__name__ == "__main__"
+class MonnifyCredential:
+    def __init__(self, api_key, secret_key, contract, walletAccountNumber, is_live):
+        self.apikey = api_key
+        self.secretKey = secret_key
+        self.contract = contract
+        self.walletId = walletAccountNumber
+        self.is_live = is_live
+    
+    def credentials(self):
+        
+        data = (self.apikey, self.secretKey, self.contract, self.walletId, self.is_live)
+        return data
+    
+    def get_token(self):
+        live = self.is_live
+        if live == True or live == False:
+            baseurl = GetBaseUrl(live).urls()
+            print(baseurl)
+            username = self.apikey
+            password = self.secretKey
+            response = requests.post(f'{baseurl}/api/v1/auth/login', 
+            auth=HTTPBasicAuth(username, password))
 
+            response_dict = json.loads(response.text)
+    
+            a = response_dict['responseBody']['accessToken']
+            res = 'Bearer {}'
+            token = res.format(a)
+            
+            self.tokens = token
+            
+            d = (self.tokens)
+            return d
+        else:
+        
+            return GetBaseUrl(live).urls()
+    
 
 
 ### Function that send a request to the Authentication endpoint and 
 ### get the Toking and retun the token for use
 
-def get_token(credentials):
-    live = credentials['is_live']
-    if live == True or live == False:
-        baseurl = getlive(live)
-        username = credentials['api_key']
-        password = credentials['secret_key']
-        response = requests.post(f'{baseurl}/api/v1/auth/login', 
-        auth=HTTPBasicAuth(username, password))
+# def get_token(x):
+#     live = x.is_live
+#     url = GetBaseUrl(live).urls()
+#     if live == True or live == False:
+#         baseurl = url.getlive()
+#         print(baseurl)
+#         username = x.apikey
+#         password = x.secretKey
+#         response = requests.post(f'{baseurl}/api/v1/auth/login', 
+#         auth=HTTPBasicAuth(username, password))
 
-        response_dict = json.loads(response.text)
+#         response_dict = json.loads(response.text)
     
-        a = response_dict['responseBody']['accessToken']
-        return f'Bearer {a}'
-    else:
-        return getlive(live)
-__name__ == "__main__"
+#         a = response_dict['responseBody']['accessToken']
+#         res = 'Bearer {}'
+#         return res.format(a)
+#     else:
+        
+#         return url.getlive()
 
 
 ## class that handle all the function and endpoint of monnify.
@@ -56,10 +84,10 @@ class Monnify:
     ## verify whether the bank account number is valid by returning the name registered with the 
     ## account number.
     
-    def verify_account(self, credentials, accountNumber, bankCode):
-        live = credentials['is_live']
+    def verify_account(self, x, accountNumber, bankCode):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/disbursements/account/validate?accountNumber={accountNumber}&bankCode={bankCode}'
 
             payload = {}
@@ -70,7 +98,7 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
 
 
     ## This function is use to reserve virtual account on the monnify platform.
@@ -79,12 +107,12 @@ class Monnify:
     ## endpoint will then create a virtual account number in the name of customer
     ## suplied and return the details of the account created.
      
-    def reserve_account(self,token, credentials, accountReference,  accountName, customerEmail, customerName, customerBvn, availableBank):
-        live = credentials['is_live']
+    def reserve_account(self, x, accountReference,  accountName, customerEmail, customerName, customerBvn, availableBank):
+        live = x.is_live
         if live == True or live == False:
-            contractCode = credentials['contract']
-            baseurl = getlive(live)
-            url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts'
+            contractCode = x.contract
+            baseurl = GetBaseUrl(live).urls()
+            url = f'{baseurl}/api/v2/bank-transfer/reserved-accounts'
             payload = {
                 "accountReference": accountReference,
                 "accountName": accountName,
@@ -97,7 +125,7 @@ class Monnify:
                 }
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("POST", url, headers=headers, data = json.dumps(payload))
@@ -105,13 +133,13 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
     
     
-    def add_link_account(self, token, credentials, accountReference, getAllAvailableBanks, preferredBanks):
-        live = credentials['is_live']
+    def add_link_account(self, x, accountReference, getAllAvailableBanks, preferredBanks):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/add-linked-accounts/{accountReference}'
             payload = {
                 "getAllAvailableBanks": getAllAvailableBanks,
@@ -119,91 +147,92 @@ class Monnify:
             }
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("PUT", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
-    def update_bvn_reserve(self, token, credentials, bvn, accountReference):
-        live = credentials['is_live']
+    def update_bvn_reserve(self, x, bvn, accountReference):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/update-customer-bvn/{accountReference}'
             payload = {
                 "bvn": bvn
             }
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("PUT", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
-    def deallocate_account(self, token, credentials, accountNumber):
-        live = credentials['is_live']
+    def deallocate_account(self, x, accountNumber):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/{accountNumber}'
             payload = {}
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("DELETE", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
         
     
-    def reserve_account_transactions(self, token, credentials, accountReference, page, size):
-        live = credentials['is_live']
+    def reserve_account_transactions(self, x, accountReference, page, size):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/bank-transfer/reserved-accounts/transactions?accountReference={accountReference}&page={page}&size={size}'
             payload = {}
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
     
     
-    def tranfer(self,credentials, amount, reference, narration, bankCode, accountNumber):
-        live = credentials['is_live']
+    def tranfer(self, x, amount, reference, narration, bankCode, accountNumber):
+        live = x.is_live
+        url = GetBaseUrl(live).urls()
         if live == True or live == False:
-            baseurl = getlive(live)
-            walletId = credentials['walletId']
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            url = f'{baseurl}/api/v1/disbursements/single'
+            baseurl = url.getlive()
+            walletId = x.walletId
+            username = x.apikey
+            password = x.secretKey
+            url = f'{baseurl}/api/v2/disbursements/single'
             
             f_amount = float(amount)
             payload = {
                 'amount': f_amount,
                 'reference': reference,
                 'narration': narration,
-                'bankCode': bankCode,
-                'accountNumber': accountNumber,
+                'destinationBankCode': bankCode,
+                'destinationAccountNumber': accountNumber,
                 'currency': 'NGN',
-                'walletId': walletId
+                'sourceAccountNumber': walletId
             }
             headers = {
                 'Content-Type': 'application/json'
@@ -214,18 +243,18 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return url.getlive()
         
         
         
     
-    def authorize_tranfer(self,credentials, reference, authorizationCode):
-        live = credentials['is_live']
+    def authorize_tranfer(self, x, reference, authorizationCode):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            url = f'{baseurl}/api/v1/disbursements/single/validate-otp'
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
+            url = f'{baseurl}/api/v2/disbursements/single/validate-otp'
         
             payload = {
                 "reference": reference,
@@ -240,16 +269,16 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
         
     
-    def resend_otp(self,credentials, reference):
-        live = credentials['is_live']
+    def resend_otp(self, x, reference):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
             url = f'{baseurl}/api/v1/disbursements/single/resend-otp'
         
             payload = {
@@ -264,16 +293,16 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
-    def get_transfer_details(self,credentials, reference):
-        live = credentials['is_live']
+    def get_transfer_details(self, x, reference):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            url = f'{baseurl}/api/v1/disbursements/single/summary?reference={reference}'
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
+            url = f'{baseurl}/api/v2/disbursements/single/summary?reference={reference}'
         
             payload = {}
             headers = {
@@ -285,17 +314,17 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
         
         
-    def get_all_single_transfer(self,credentials, pageSize, pageNo):
-        live = credentials['is_live']
+    def get_all_single_transfer(self, x, pageSize, pageNo):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            url = f'{baseurl}/api/v1/disbursements/single/transactions?pageSize={pageSize}&pageNo={pageNo}'
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
+            url = f'{baseurl}/api/v2/disbursements/single/transactions?pageSize={pageSize}&pageNo={pageNo}'
         
             payload = {}
             headers = {
@@ -307,18 +336,18 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def get_wallet_balance(self,credentials):
-        live = credentials['is_live']
+    def get_wallet_balance(self, x):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            walletId = credentials['walletId']
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            url = f'{baseurl}/api/v1/disbursements/wallet-balance?walletId={walletId}'
+            baseurl = GetBaseUrl(live).urls()
+            walletId = x.walletId
+            username = x.apikey
+            password = x.secretKey
+            url = f'{baseurl}/api/v2/disbursements/wallet-balance?accountNumber={walletId}'
         
             payload = {}
             headers = {
@@ -330,18 +359,18 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def create_invoice(self, credentials, amount, invoiceReference, description, customerEmail, customerName, expiryDate, paymentMethods, redirectUrl):
+    def create_invoice(self, x, amount, invoiceReference, description, customerEmail, customerName, expiryDate, paymentMethods, redirectUrl):
         
-        live = credentials['is_live']
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            contractCode = credentials['contract']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
+            contractCode = x.contract
             url = f'{baseurl}/api/v1/invoice/create'
             
             payload = {
@@ -366,77 +395,79 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
     
     
-    def initiate_refund(self, token, credentials, refundReference, transactionReference, refundAmount, refundReason, customerNote):
-        live = credentials['is_live']
+    def initiate_refund(self, x, refundReference, transactionReference, refundAmount, refundReason, customerNote, destinationAccountNumber, destinationAccountBankCode):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/refunds/initiate-refund'
             payload = {
                 "refundReference": refundReference,
                 "transactionReference": transactionReference,
                 "refundAmount": refundAmount,
                 "refundReason": refundReason,
-                "customerNote": customerNote
+                "customerNote": customerNote,
+                "destinationAccountNumber": destinationAccountNumber,
+                "destinationAccountBankCode": destinationAccountBankCode
             }
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("POST", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
     
     
-    def get_refund_status(self, token, credentials, transactionReference,):
-        live = credentials['is_live']
+    def get_refund_status(self, x, transactionReference,):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/refunds/{transactionReference}'
             payload = {}
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def get_all_refund(self, token, credentials, page, size):
-        live = credentials['is_live']
+    def get_all_refund(self, x, page, size):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/refunds?page={page}&size={size}'
             payload = {}
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': x.get_token()
                 }
 
             response = requests.request("GET", url, headers=headers, data = json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def create_sub_account(self, credentials, bankCode, accountNumber, email, splitPercentage):
-        live = credentials['is_live']
+    def create_sub_account(self, x, bankCode, accountNumber, email, splitPercentage):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
             url = f'{baseurl}/api/v1/sub-accounts'
 
             payload = json.dumps([
@@ -458,16 +489,16 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
         
         
-    def get_sub_account(self, credentials):
-        live = credentials['is_live']
+    def get_sub_account(self, x):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
             url = f'{baseurl}/api/v1/sub-accounts'
 
             payload = {}
@@ -481,16 +512,16 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def update_sub_account(self, credentials, subAccountCode, bankCode, accountNumber, email, splitPercentage):
-        live = credentials['is_live']
+    def update_sub_account(self, x, subAccountCode, bankCode, accountNumber, email, splitPercentage):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
             url = f'{baseurl}/api/v1/sub-accounts'
 
             payload = {
@@ -510,16 +541,16 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
     
     
-    def delete_sub_account(self, credentials, subAccountCode):
-        live = credentials['is_live']
+    def delete_sub_account(self, x, subAccountCode):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
+            baseurl = GetBaseUrl(live).urls()
+            username = x.apikey
+            password = x.secretKey
             url = f'{baseurl}/api/v1/sub-accounts/{subAccountCode}'
 
             payload = {}               
@@ -532,18 +563,15 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
         
         
     
-    def one_time_payment(self, credentials, amount, customerName, customerEmail, paymentReference, paymentDescription, redirectUrl, paymentMethods):
-        live = credentials['is_live']
+    def one_time_payment(self, x, amount, customerName, customerEmail, paymentReference, paymentDescription, redirectUrl, paymentMethods):
+        live = x.is_live
         if live == True or live == False:
-            baseurl = getlive(live)
-            username = credentials['api_key']
-            password = credentials['secret_key']
-            contractCode = credentials['contract']
+            baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/merchant/transactions/init-transaction'
             famount = float(amount)
             payload = {
@@ -553,7 +581,7 @@ class Monnify:
                 "paymentReference": paymentReference,
                 "paymentDescription": paymentDescription,
                 "currencyCode": "NGN",
-                "contractCode":contractCode,
+                "contractCode": x.contract,
                 "redirectUrl": redirectUrl,
                 "paymentMethods": paymentMethods
             }               
@@ -561,10 +589,10 @@ class Monnify:
                 'Content-Type': 'application/json'
             }
 
-            response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, data = json.dumps(payload))
+            response = requests.request("POST", url, auth=HTTPBasicAuth(x.apikey, x.secretKey), headers=headers, data = json.dumps(payload))
 
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return getlive(live)
+            return GetBaseUrl(live).urls()
         
