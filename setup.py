@@ -12,7 +12,7 @@ setuptools.setup(
     description="TeamApt Monnify Python Library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/samkayz/teamapt-monnify/tree/v2",
+    url="https://github.com/samkayz/teamapt-monnify.git",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
