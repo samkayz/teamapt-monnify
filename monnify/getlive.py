@@ -9,5 +9,5 @@ class GetBaseUrl:
             return 'https://sandbox.monnify.com'
         
         else:
-            print(self.live)
+            # print(self.live)
             return 'live can either be True or False'

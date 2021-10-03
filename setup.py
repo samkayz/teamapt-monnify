@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="teamapt-monnify", # Replace with your own username
-    version="1.0.0",
+    version="1.1.0",
     author="Samson Ilemobayo",
     author_email="ilemobayosamson@gmail.com",
     description="TeamApt Monnify Python Library",
@@ -20,7 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.X',
     install_requires=[
         "requests",
     ],

@@ -1,11 +1,16 @@
                                   MONNIFY PYTHON LIBRARY USER GUIDE
-                                            Version 1.0.0
+                                            Version 1.1.0
 
 Monnify is one of the products of TeamApt <https://www.teamapt.com/> . Monnify empowers businesses in the formal & informal sectors with the right tools & solutions to manage their finances and grow their businesses. Businesses in the formal economy benefit from our payment infrastructure that simplifies how they accept, manage and make payments. While smaller-scale businesses and entrepreneurs benefit from our market-community focused products that give them accessible, affordable and convenient short term working capital.
 
                                   MONNIFY PYTHON LIBRARY USER GUIDE
 
-Before you can start integrating to Monnify, you will need to sign up on Monnify. Click <https://app.monnify.com/create-account> to sign up. After successful registration, login and for your credentials. 
+Before you can start integrating to Monnify, you will need to sign up on Monnify. Click <https://app.monnify.com/create-account> to sign up. After successful registration, login and for your credentials.
+
+
+                                              VERSION NOTE
+
+The Previous Version of this library uses Wallet ID. while this Version make use of WALLET ACCOUNT Number. Also, I have add some other functionality to it so smooth integration.
 
                                             CREDENTIAL NEEDED
 
@@ -20,28 +25,27 @@ All this can be seen on the setting area when you login to you logged in.
                                             API ENDPOINT IN THE LIBRARY
                                             
 1. monnifyCredential
-2. get_token
-3. verify_account
-4. reserve_account
-5. add_link_account
-6. update_bvn_reserve
-7. deallocate_account
-8. reserve_account_transactions
-9. tranfer
-10. authorize_tranfer
-11. resend_otp
-12. get_transfer_details
-13. get_all_single_transfer
-14. get_wallet_balance
-15. create_invoice
-17. initiate_refund
-18. get_refund_status
-19. get_all_refund
-20. create_sub_account
-21. get_sub_account
-22. update_sub_account
-23. delete_sub_account
-24. one_time_payment
+2. verify_account
+3. reserve_account
+4. add_link_account
+5. update_bvn_reserve
+6. deallocate_account
+7. reserve_account_transactions
+8. tranfer
+9. authorize_tranfer
+10. resend_otp
+11. get_transfer_details
+12. get_all_single_transfer
+13. get_wallet_balance
+14. create_invoice
+15. initiate_refund
+16. get_refund_status
+17. create_sub_account
+18. get_sub_account
+19. update_sub_account
+20. delete_sub_account
+21. one_time_payment
+22. callback(Django/Flask/FastAPI)
 
                                             HOW TO USE THE LIBRARY
 To use the library, we have to use package installer (pip) by running: pip install teamapt-monnify
@@ -49,30 +53,22 @@ To use the library, we have to use package installer (pip) by running: pip insta
 After successfull installation, we can now use the package in our development by importing it in our script
 
 
-            from monnify.monnify import monnifyCredential, get_token, Monnify
+            from monnify.monnify import MonnifyCredential, Monnify
 
-            monnify = Monnify()
+            reserve = Monnify()
 
-            api_key = "MK_TEST_8UBXGKTYYYWB"
-            secret_key = "ENRC4FDYYYETKA53YPXBFLUFXWYHG2"
-            contractCode = '2917634883'
-            walletId = '654CAB211YY36760A659C787B2AA38E8'
+            api_key = "MK_TEST_8UBXGKXXXXXXXX"
+            secret_key = "ENRC4FDYYYETKA53YPXBFXXXXXXXX"
+            contractCode = '29176XXXX'
+            WalletAccountNo = '226925XXXXX'
 
-            merchant_credential = monnifyCredential(
-              api_key, 
-              secret_key, 
-              contractCode, 
-              walletId, 
-              is_live=False
-              )
+            merchant_credential = MonnifyCredential(api_key, secret_key, contractCode, WalletAccountNo, is_live=False)
 
-            token = get_token(merchant_credential)
-
-NOTE: If you are in sandbox please is_live = False and can only be set to True when you are in production and make sure you change credentials to live credentials
+NOTE: If you are in sandbox, set is_live = False and can only be set to True when you are in production and make sure you change credentials to live credentials
 
 
 
-1.VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
+1. VERIFY BANK ACCOUNT - This allows you check if an account number is a valid NUBAN, get the account name if valid.
 
             bank = monnify.verify_account(
               merchant_credential, 
@@ -92,7 +88,7 @@ NOTE: If you are in sandbox please is_live = False and can only be set to True w
               }
             }
           
-2 INVOICE - Monnify invoicing allows you generate invoices via APIs. For each invoice, a virtual account number will be generated and tied to that invoice so your customers can simply transfer to that account number to pay
+2. INVOICE - Monnify invoicing allows you generate invoices via APIs. For each invoice, a virtual account number will be generated and tied to that invoice so your customers can simply transfer to that account number to pay
 
             create_invoice = monnify.create_invoice(
               merchant_credential, 
@@ -131,7 +127,7 @@ NOTE: If you are in sandbox please is_live = False and can only be set to True w
               }
             }
 
-3 RESERVE ACCOUNT - Reserved account APIs enable merchants create accounts that can be dedicated to each of their customers. Once any payment is done to that account, we notify your webhook with the payment information
+3. RESERVE ACCOUNT - Reserved account APIs enable merchants create accounts that can be dedicated to each of their customers. Once any payment is done to that account, we notify your webhook with the payment information
 
 
             reserve_account = monnify.reserve_account(
@@ -172,14 +168,13 @@ NOTE: If you are in sandbox please is_live = False and can only be set to True w
               }
             }
 
-NOTE: When the availableBank is set to True,random account number amount there partner bank will be reserved. if you want to reserved you choice of bank e.g WEMA, you have to set the availableBank to the code of the bank you wish to reserve i.e availableBank='035'. available partner bank codes are (Rolez MFB = 50515, Wema Bank = 035, Sterling Bank = 232)
+NOTE: When the availableBank is set to True,random account number between their partner banks will be reserved and assigned to your customer. if you want to reserve your choice of bank e.g WEMA, you have to set the availableBank to the code of the bank you wish to reserve i.e availableBank='035'. available partner bank codes are (Rolez MFB = 50515, Wema Bank = 035, Sterling Bank = 232)
 
           
-4 ADD LINK ACCOUNT - This API allows you to add accounts with another partner bank and link to an existing customer with the customer's account reference.
+4. ADD LINK ACCOUNT - This API allows you to add accounts with another partner bank and link to an existing customer with the customer's account reference.
 
 
-            link_account = monnify.add_link_account(
-              token, 
+            link_account = monnify.add_link_account( 
               merchant_credential, 
               accountReference='tw663552', 
               getAllAvailableBanks=True, 
@@ -226,10 +221,9 @@ NOTE: When the availableBank is set to True,random account number amount there p
 
 NOTE: If getAllAvailableBanks is set to true, then an account with all available banks not yet linked will be added. Set getAllAvailableBanks to false if you want to specify preferred banks to reserve accounts with. set to true if you want to add all other available partner bank accounts to your reserved account.
 
-5 UPDATE BVN FOR RESERVE ACCOUNT - This Function is to be used to update a customer's BVN mapped to a Reserved Account.
+5. UPDATE BVN FOR RESERVE ACCOUNT - This Function is used to update a customer's BVN mapped to a Reserved Account.
 
-            update_bvn = monnify.update_bvn_reserve(
-              token, 
+            update_bvn = monnify.update_bvn_reserve( 
               merchant_credential, 
               bvn='66377283884', 
               accountReference='635525663623'
@@ -259,12 +253,11 @@ NOTE: If getAllAvailableBanks is set to true, then an account with all available
               }
            }
           
-6 DEALLOCATE RESERVE ACCOUNT: This is used to deallocate/delete reserved account.
+6. DEALLOCATE RESERVE ACCOUNT: This Endpoint is used to deallocate/delete reserved account.
 
-            delete_account = monnify.deallocate_account(
-              token, 
+            delete_account = monnify.deallocate_account( 
               merchant_credential, 
-              accountNumber='3000041799'
+              accountNumber='300004XXXX'
               )
             print(delete_account)
 
@@ -288,9 +281,9 @@ NOTE: If getAllAvailableBanks is set to true, then an account with all available
                 }
             }
 
-NOTE: Any Account deallocated/delete can not be reversed.
+NOTE: Kindly note that any Account deallocated/delete can not be reversed.
           
-7 TRANSFER: This is use to initiate transfer to bank
+7. TRANSFER: This is use to initiate transfer to bank.
 
             transfer = monnify.tranfer(
               merchant_credential, 
@@ -312,8 +305,10 @@ NOTE: Any Account deallocated/delete can not be reversed.
               "currency": "NGN",
               "sourceAccountNumber": "9624937372"
             }
+NOTE: If you have 2FA activated on your Account, you will need to call authorize transfer endpoint to authorize the transaction before it can be successfull.
 
-8. AUTHORIZE TRANSFER: To authorize a transfer, you will need to call the following function. If the merchant does not have Two Factor Authentication (2FA) enabled, the transaction will be processed instantly and the response will be as follows:
+
+8. AUTHORIZE TRANSFER: To authorize a transfer, you will need to call the following function. once the transaction is initiated, a mail will be sent to the merchante registered email containing the OTP which the merchant can now use to authorize the transaction by calling this endpoint and pass in the OTP and transaction ref No.  If the merchant did not have Two Factor Authentication (2FA) enabled, there is no need to use this endpoint. 
 
             authorize = monnify.authorize_tranfer(
               merchant_credential, 
@@ -335,7 +330,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
                 }
             }
 
-9. RESEND OTP: This is function to resend OTP if 2FA is enable for transfer
+9. RESEND OTP: This function can be used to resend OTP if 2FA is enable for transfer
 
             resendOtp = monnify.resend_otp(
               merchant_credential, 
@@ -352,7 +347,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
               }
             }
 
-10. GET TRANSFER DETAILS: To get the details of a single transfer,  you will need to call the endpoint below:
+10. GET TRANSFER DETAILS: It's advisable to verify the status of your transaction before awarding value. this will allow you to be sure that transaction is successful or not.  To get the details of a single transfer,  you will need to call the endpoint below:
 
             get_transfer = monnify.get_transfer_details(
               merchant_credential, 
@@ -479,14 +474,15 @@ NOTE: Any Account deallocated/delete can not be reversed.
 
 13. INITIATE REFUND: This function enables you process refund to a customer for a transaction.
 
-                refund_money = monnify.initiate_refund(
-                  token, 
+                refund_money = monnify.initiate_refund( 
                   merchant_credential, 
                   refundReference='6637whhhwe', 
                   transactionReference='MNFY|63|20210413134205|000113', 
                   refundAmount='1000.0', 
                   refundReason='Order cancelled!', 
-                  customerNote='Canceled'
+                  customerNote='Canceled', 
+                  destinationAccountNumber='2211XXXXXX', 
+                  destinationAccountBankCode='057'
                   )
 
                 print(refund_money)
@@ -514,7 +510,6 @@ NOTE: Any Account deallocated/delete can not be reversed.
 14. GET REFUND STATUS: This function can be used to get status of an initiated refund.
 
                 get_refund_status = monnify.get_refund_status(
-                  token, 
                   merchant_credential, 
                   transactionReference='MNFY|63|20210413134205|000113'
                   )
@@ -541,62 +536,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
                 }
 
 
-15. GET ALL REFUNDS: This function enables you process refund to a customer for a transaction.
-
-              get_refund_status = monnify.get_refund_status(
-                token, 
-                merchant_credential, 
-                transactionReference='MNFY|63|20210413134205|000113'
-                )
-              print(get_refund_status)
-
-
-              {
-                "requestSuccessful":true,
-                "responseMessage":"success",
-                "responseCode":"0",
-                "responseBody":{
-                    "content":[
-                      {
-                          "transactionReference":"MNFY|0111231|123412342",
-                          "paymentReference":"J_12312_122",
-                          "transactionAmount":5000,
-                          "refundAmount":1200,
-                          "refundStatus":"IN_PROGRESS",
-                          "refundReason":"Order was cancelled",
-                          "customerNote":"Refund for order J1110",
-                          "refundType":"FULL_REFUND",
-                          "createdOn":"15/12/2020 09:38:13 AM",
-                          "completedOn":"15/12/2020 12:20:23 PM",
-                          "comment":"Refund processed successfully."
-                      },
-                      {
-                          "transactionReference":"MNFY|0111231|123412342",
-                          "paymentReference":"J_12312_122",
-                          "transactionAmount":5000,
-                          "refundAmount":1200,
-                          "refundStatus":"IN_PROGRESS",
-                          "refundReason":"Order was cancelled",
-                          "customerNote":"Refund for order J1110",
-                          "refundType":"FULL_REFUND",
-                          "createdOn":"15/12/2020 09:38:13 AM",
-                          "completedOn":"15/12/2020 12:20:23 PM",
-                          "comment":"Refund processed successfully."
-                      }
-                    ],
-                    "last":false,
-                    "totalElements":258,
-                    "totalPages":129,
-                    "first":true,
-                    "numberOfElements":2,
-                    "size":2,
-                    "number":0,
-                    "empty":false
-                }
-              }
-  
-
-16. CREATE SUB-ACCOUNT: Creates a sub account for a merchant. Allowing the merchant split transaction settlement between the main account and one or more sub account(s)
+15. CREATE SUB-ACCOUNT: Creates a sub account for a merchant. Allowing the merchant split transaction settlement between the main account and one or more sub account(s)
 
               create_sub_account = monnify.create_sub_account(
                 merchant_credential, 
@@ -626,7 +566,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
                   ]
               }
 
-17. DELETE SUB-ACCOUNT: Deletes a merchant's sub account.
+16. DELETE SUB-ACCOUNT: Deletes a merchant's sub account.
 
             delete_sub_account = monnify.delete_sub_account(
               merchant_credential, 
@@ -640,7 +580,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
               "responseCode": "0"
             }
 
-18. GET ALL SUB-ACCOUNTS: Returns a list of sub accounts previously created by the merchant.
+17. GET ALL SUB-ACCOUNTS: Returns a list of sub accounts previously created by the merchant.
 
             get_sub_account = monnify.get_sub_account(merchant_credential)
             print(get_sub_account)
@@ -674,7 +614,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
                 ]
             }
 
-19. UPDATE SUB-ACCOUNT: Updates the information on an existing sub account for a merchant.
+18. UPDATE SUB-ACCOUNT: Updates the information on an existing sub account for a merchant.
 
              update_sub_account = monnify.update_sub_account(
                merchant_credential, 
@@ -705,7 +645,7 @@ NOTE: Any Account deallocated/delete can not be reversed.
             }
 
 
-20. ONE TIME PAYMENT: Allows you initialize a transaction on Monnify and returns a checkout URL which you can load within a browser to display the payment form to your customer.
+19. ONE TIME PAYMENT: Allows you initialize a transaction on Monnify and returns a checkout URL which you can load within a browser to display the payment form to your customer.
 
               one_time_payment = monnify.one_time_payment(
                 merchant_credential, 
@@ -731,13 +671,14 @@ NOTE: Any Account deallocated/delete can not be reversed.
                 "redirectUrl": "http://test.com",
                 "paymentMethods":["CARD","ACCOUNT_TRANSFER"]
               }
+NOTE: If paymentMethods is set to CARD, Your customer can only use card for payment and if set to ACCOUNT_TRANSFER, it will only accept Acoount Transfer as the only mode of payment. If both is set, the customer will be able to use both CARD and TRANSFER to make payment.
 
 
-21. GET RESERVE ACCOUNT TRANSACTIONS: You can get a paginated list of transactions processed to a reserved account by calling the endpoint below and by specifying the accountReference as a query parameter. You can also specify the page number and size (number of transactions) you want returned per page.
+
+20. GET RESERVE ACCOUNT TRANSACTIONS: You can get a paginated list of transactions processed to a reserved account by calling the endpoint below and by specifying the accountReference as a query parameter. You can also specify the page number and size (number of transactions) you want returned per page.
 
 
-                alltrans = monnify.reserve_account_transactions(
-                  token, 
+                alltrans = monnify.reserve_account_transactions( 
                   merchant_credential, 
                   accountReference='7737762h', 
                   page=0, size=10)
@@ -805,3 +746,59 @@ NOTE: Any Account deallocated/delete can not be reversed.
 
 
 These are the endpoint for casual transactions and some of endnpoint are yet to developed which i will included in next version. i will also be including some new enhancement to the library for smooth financial transactions.
+
+
+
+21. CALLBACK: This endpoint allow merchant to recieve every successful or fail transaction payload that happen on the merchant platform in realtime. To use this, merchant need to add callback url to his dashboard and follow the below process.
+
+                FOR DJANGO and FLASK
+
+
+                def callback(request):
+                    body = monnify.webhook(request)
+
+                    ''''''''''''
+                    Do Something with the body.........
+                    ''''''''''''
+                    return body
+
+                Set your url path to call the function. If you print the body, you will get the below response for every successful transaction
+
+
+                { 
+                    "transactionReference" : "MNFY|20200900003149|000000", 
+                    "paymentReference" : "MNFY|20200900003149|000000", 
+                    "amountPaid" : "180000.00", 
+                    "totalPayable" : "180000.00", 
+                    "settlementAmount" : "179989.25", 
+                    "paidOn" : "09/09/2020 11:31:56 AM", 
+                    "paymentStatus" : "PAID", 
+                    "paymentDescription" : "Ojinaka Daniel", 
+                    "transactionHash" : "a294a0bfxxxxxxxxxxxxxxxxxxxx0b399cf077e30cf2ad54a7da9e17583deb5130286e6bb5dxxxx353f027725b83fcafac02d2e181f53edd5f", 
+                    "currency" : "NGN", 
+                    "paymentMethod" : "ACCOUNT_TRANSFER", 
+                    "product" : { 
+		                    "type" : "RESERVED_ACCOUNT", 
+		                    "reference" : "7b3xxxx072a44axxxxxxx2b6c2374458" 
+			              }, 
+                    "cardDetails" : null, 
+                    "accountDetails" : { 
+		                "accountName" : "John Ciroma Abuh", 
+		                "accountNumber" : "******4872", 
+		                "bankCode" : "000015", 
+		                "amountPaid" : "180000.00" 
+			            }, 
+                  "accountPayments" : [ { 
+		                    "accountName" : "John Ciroma Abuh", 
+		                    "accountNumber" : "******4872", 
+		                    "bankCode" : "000015", 
+		                    "amountPaid" : "180000.00" 
+			              } ], 
+                    "customer" : { 
+		                    "email" : "dojinaka@monnify.com", 
+		                    "name" : "Daniel Ojinaka" 
+			              }, 
+                    "metaData" : { } 
+                }
+
+NOTE: This endpoint is tested with Django and Flask.
