@@ -216,9 +216,8 @@ class Monnify:
     
     def tranfer(self, credentials, amount, reference, narration, bankCode, accountNumber):
         live = credentials.is_live
-        url = GetBaseUrl(live).urls()
         if live == True or live == False:
-            baseurl = url.getlive()
+            baseurl = GetBaseUrl(live).urls()
             walletId = credentials.walletId
             username = credentials.apikey
             password = credentials.secretKey
@@ -243,7 +242,7 @@ class Monnify:
             r_dict = json.loads(response.text)
             return r_dict
         else:
-            return url.getlive()
+            return GetBaseUrl(live).urls()
         
         
         
