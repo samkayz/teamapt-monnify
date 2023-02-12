@@ -22,30 +22,77 @@ The Previous Version of this library uses Wallet ID. while this Version make use
 All this can be seen on the setting area when you login to you logged in.
 
 
-                    API ENDPOINT IN THE LIBRARY
-    Before the library can be used, we have to load the credentials and pass it to the class of 
-    product we want to call.
+## API ENDPOINT IN THE LIBRARY
+Before the library can be used, we have to load the credentials and pass it to the class of 
+product we want to call.
+```python
+from monnify.monnify import MonnifyCredential
 
-    ```
-    from monnify.monnify import MonnifyCredential
+api_key = "Your API Key"
+secret_key = "Your Secret Key"
+contractCode = 'Your Contract Code'
+walletId = 'Your Wallet ID'
 
-    api_key = "Your API Key"
-    secret_key = "Your Secret Key"
-    contractCode = 'Your Contract Code'
-    walletId = 'Your Wallet ID'
-
-    credentials = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
-    ```
-1. monnifyCredential
+credentials = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
+```
                     
-                    CUSTOMER RESERVED ACCOUNT
+## CUSTOMER RESERVED ACCOUNT
+This method is used to create and manage virtual account on monnify. The API can be used as followed.
 
-        This method is used to create and manage virtual account on monnify. The API can be used as
-        as followed.
-
-           1. CREATE/RESERVE VIRTUAL ACCOUNT
-                
-                from monnify.monnify import CustomerReservedAccount
+1. CREATE/RESERVE VIRTUAL ACCOUNT
+```python
+from monnify.monnify import CustomerReservedAccount
+reserve = CustomerReservedAccount(credentials=credentials)
+reserve_account = reserve.reserve_account(
+    payload=dict(
+        accountReference='tw663533',
+        accountName='John doe',
+        customerEmail='jdoe@gmail.com',
+        customerName="John doe",
+        bvn='66377273233',
+        getAllAvailableBanks=True
+    )
+)
+print(reserve_account)
+```
+## Response
+```json
+{
+  'requestSuccessful': True, 
+  'responseMessage': 'success', 
+  'responseCode': '0', 
+  'responseBody': {
+    'contractCode': '2917634474', 
+    'accountReference': 'tw663533', 
+    'accountName': 'john', 
+    'currencyCode': 'NGN', 
+    'customerEmail': 'jdoe@gmail.com', 
+    'customerName': 'John Doe', 
+    'accounts': [
+      {
+        'bankCode': '035', 
+        'bankName': 'Wema bank', 
+        'accountNumber': '5000449926', 
+        'accountName': 'Sam'
+      }, 
+      {
+        'bankCode': '232', 
+        'bankName': 'Sterling bank', 
+        'accountNumber': '6001350412', 
+        'accountName': 'Sam'
+      }
+    ], 
+    'collectionChannel': 'RESERVED_ACCOUNT', 
+    'reservationReference': '81PY78T22SPRRADYBC4L', 
+    'reservedAccountType': 'GENERAL', 
+    'status': 'ACTIVE', 
+    'createdOn': '2023-02-12 15:51:26.654', 
+    'incomeSplitConfig': [], 
+    'bvn': '66377273233', 
+    'restrictPaymentSource': False
+  }
+}
+```
 
 2. verify_account
 3. reserve_account
