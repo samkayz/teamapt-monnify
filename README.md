@@ -26,7 +26,7 @@ All this can be seen on the setting area when you login to you logged in.
     Before the library can be used, we have to load the credentials and pass it to the class of 
     product we want to call.
 
-    ```python
+    ```
     from monnify.monnify import MonnifyCredential
 
     api_key = "Your API Key"
