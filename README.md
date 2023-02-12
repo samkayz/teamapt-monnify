@@ -58,38 +58,25 @@ print(reserve_account)
 ## Response
 ```json
 {
-  'requestSuccessful': True, 
-  'responseMessage': 'success', 
-  'responseCode': '0', 
-  'responseBody': {
-    'contractCode': '2917634474', 
-    'accountReference': 'tw663533', 
-    'accountName': 'john', 
-    'currencyCode': 'NGN', 
-    'customerEmail': 'jdoe@gmail.com', 
-    'customerName': 'John Doe', 
-    'accounts': [
+  "requestSuccessful": true, 
+  "responseMessage": "success", 
+  "responseCode": "0", 
+  "responseBody": {
+    "accountName": "john", 
+    "currencyCode": "NGN", 
+    "customerEmail": "jdoe@gmail.com", 
+    "customerName": "John Doe", 
+    "accounts": [
       {
-        'bankCode': '035', 
-        'bankName': 'Wema bank', 
-        'accountNumber': '5000449926', 
-        'accountName': 'Sam'
-      }, 
-      {
-        'bankCode': '232', 
-        'bankName': 'Sterling bank', 
-        'accountNumber': '6001350412', 
-        'accountName': 'Sam'
+        "bankCode": "232", 
+        "bankName": "Sterling bank", 
+        "accountNumber": "6001350412", 
+        "accountName": "John"
       }
-    ], 
-    'collectionChannel': 'RESERVED_ACCOUNT', 
-    'reservationReference': '81PY78T22SPRRADYBC4L', 
-    'reservedAccountType': 'GENERAL', 
-    'status': 'ACTIVE', 
-    'createdOn': '2023-02-12 15:51:26.654', 
-    'incomeSplitConfig': [], 
-    'bvn': '66377273233', 
-    'restrictPaymentSource': False
+    ],
+    "status": "ACTIVE", 
+    "createdOn": "2023-02-12 15:51:26.654",
+    "restrictPaymentSource": false
   }
 }
 ```
