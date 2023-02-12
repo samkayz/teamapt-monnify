@@ -2,10 +2,12 @@ from monnify.monnify import MonnifyCredential, Monnify
 
 reserve = Monnify()
 
-api_key = "MK_TEST_8ZSVXMX9ZU"
-secret_key = "GFHW6W69BREVLMBZ8FQ653W6KQHXFUXT"
-contractCode = '2858152371'
-walletId = '2269258532'
+api_key = "MK_TEST_8UBXGKTFSB"
+secret_key = "ENRC4FDYKSTUYQKA53YPXBFLUFXWYHG2"
+contractCode = '2917634474'
+walletId = '654CAB2118124760A659C787B2AA38E8'
+
+
 
 credentials = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
 
@@ -29,8 +31,8 @@ credentials = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_
 # get_all_single = reserve.get_all_single_transfer(x, pageSize=1, pageNo=1)
 # print(get_all_single)
 
-walletBal = reserve.get_wallet_balance(credentials)
-print(walletBal)
+# walletBal = reserve.get_wallet_balance(credentials)
+# print(walletBal)
 
 # create_invoice = reserve.create_invoice(x, amount='1000', invoiceReference='uueyyws', description='test invoice', customerEmail='test@gmail.com', customerName='Samson', expiryDate='2021-09-30 12:00:00', paymentMethods=['CARD', 'ACCOUNT_TRANSFER'], redirectUrl='')
 # print(create_invoice)
@@ -40,3 +42,32 @@ print(walletBal)
 
 # one_time_payment = reserve.one_time_payment(x, amount='1000', customerName='Samson Akin', customerEmail='ilemobayosamson@gmail.com', paymentReference='77uuuwyyq', paymentDescription='Test Payment', redirectUrl='http://savitechng.com', paymentMethods=['ACCOUNT_TRANSFER', 'CARD'])
 # print(one_time_payment)
+
+initiate_card = reserve.initialize_card(
+    credentials=credentials,
+    payload={
+          "amount": 100.00,
+          "customerName": "Stephen Ikhane",
+          "customerEmail": "stephen@ikhane.com",
+          "paymentReference": "123031klsadkad",
+          "paymentDescription": "Trial transaction",
+          "currencyCode": "NGN",
+          "contractCode":"2917634474",
+          "redirectUrl": "https://my-merchants-page.com/transaction/confirm",
+          "paymentMethods":["CARD","ACCOUNT_TRANSFER"]
+        }
+    )
+print(initiate_card)
+# card_payment = reserve.pay_with_card(
+#     credentials=credentials,
+#     transaction_ref="MNFY|38|20230211175101|000058",
+#     collection_channel="API_NOTIFICATION",
+#     card_details=dict(
+#         number="4111111111111111",
+#         expiryMonth="10",
+#         expiryYear="2022",
+#         pin="1234",
+#         cvv="122"
+#     )
+# )
+# print(card_payment)

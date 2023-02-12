@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: teamapt-monnify
-Version: 1.1.0
+Version: 1.1.1
 Summary: TeamApt Monnify Python Library
 Home-page: https://github.com/samkayz/teamapt-monnify.git
 Author: Samson Ilemobayo
@@ -10,7 +10,7 @@ Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.X
+Requires-Python: >=3.x
 Description-Content-Type: text/markdown
 License-File: LICENSE
 

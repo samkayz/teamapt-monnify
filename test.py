@@ -1,4 +1,4 @@
-from monnify.monnify import monnifyCredential, get_token, Monnify
+from monnify.monnify import MonnifyCredential, Monnify
 
 reserve = Monnify()
 
@@ -8,7 +8,7 @@ contractCode = '2917634474'
 walletId = '654CAB2118124760A659C787B2AA38E8'
 
 
-login_credential = monnifyCredential(api_key, secret_key, contractCode, walletId, is_live=000)
+login_credential = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_live=000)
 # print(login_credential)
 token = get_token(login_credential)
 # print(token)
@@ -71,8 +71,8 @@ token = get_token(login_credential)
 # get_transfer = reserve.get_transfer_details(login_credential, reference='66635525')
 # print(get_transfer)
 
-get_all_single = reserve.get_all_single_transfer(login_credential, pageSize=5, pageNo=1)
-print(get_all_single)
+# get_all_single = reserve.get_all_single_transfer(login_credential, pageSize=5, pageNo=1)
+# print(get_all_single)
 
 
 # walletBal = reserve.get_wallet_balance(login_credential)
