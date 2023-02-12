@@ -22,9 +22,31 @@ The Previous Version of this library uses Wallet ID. while this Version make use
 All this can be seen on the setting area when you login to you logged in.
 
 
-                                            API ENDPOINT IN THE LIBRARY
-                                            
+                    API ENDPOINT IN THE LIBRARY
+    Before the library can be used, we have to load the credentials and pass it to the class of 
+    product we want to call.
+
+    ```python
+    from monnify.monnify import MonnifyCredential
+
+    api_key = "Your API Key"
+    secret_key = "Your Secret Key"
+    contractCode = 'Your Contract Code'
+    walletId = 'Your Wallet ID'
+
+    credentials = MonnifyCredential(api_key, secret_key, contractCode, walletId, is_live=False)
+    ```
 1. monnifyCredential
+                    
+                    CUSTOMER RESERVED ACCOUNT
+
+        This method is used to create and manage virtual account on monnify. The API can be used as
+        as followed.
+
+           1. CREATE/RESERVE VIRTUAL ACCOUNT
+                
+                from monnify.monnify import CustomerReservedAccount
+
 2. verify_account
 3. reserve_account
 4. add_link_account

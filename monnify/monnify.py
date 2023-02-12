@@ -38,7 +38,6 @@ class MonnifyCredential:
         live = self.is_live
         if live == True or live == False:
             baseurl = GetBaseUrl(live).urls()
-            print(baseurl)
             username = self.apikey
             password = self.secretKey
             response = requests.post(f'{baseurl}/api/v1/auth/login',
@@ -241,7 +240,7 @@ class OneTimePayment:
 class CustomerReservedAccount:
     """
     The Customer Reserved Account is used to reserve virtual account for customer which can be used to transact
-    across all bank in Nigeria
+    across all banks in Nigeria
     """
     def __init__(self, credentials):
         self.credentials = credentials
@@ -254,11 +253,11 @@ class CustomerReservedAccount:
 
     def reserve_account(self, payload: dict):
         """
-            This function is used to reserve virtual account on the monnify platform.
-            It takes Auth Token, merchant credentials, account reference, accoun name,
-            customer email, customer name, customer BVN, and available bank. this
-            endpoint will then create a virtual account number in the name of customer
-            supplied and return the details of the account created.
+        This function is used to reserve virtual account on the monnify platform.
+        It takes Auth Token, merchant credentials, account reference, accoun name,
+        customer email, customer name, customer BVN, and available bank. this
+        endpoint will then create a virtual account number in the name of customer
+        supplied and return the details of the account created.
         """
         required_fields = ["accountReference", "accountName",
                            "customerEmail", "bvn", "customerName", "getAllAvailableBanks"]
@@ -273,7 +272,6 @@ class CustomerReservedAccount:
             payload['currencyCode'] = "NGN"
             payload['contractCode'] = self.credentials.contract
             response = requests.request("POST", url, headers=self.headers(), data=json.dumps(payload))
-
             r_dict = json.loads(response.text)
             return r_dict
         else:
@@ -755,7 +753,16 @@ class SubAccount:
         else:
             return GetBaseUrl(live).urls()
 
-class Monnify:
+
+class Refund:
+    """
+    These set of methods enables merchants manage transaction refunds to customers.
+    For payments made via transfers, merchant will be charged a refund fee of N10
+    and this will be deducted from merchant's wallet, hence currently, merchant is
+    required to have her wallet funded before refunds can be processed.
+
+    NOTE: Refund is currently available for just payments via transfers.
+    """
     def __init__(self, credentials):
         self.credentials = credentials
 
@@ -765,37 +772,40 @@ class Monnify:
                 'Authorization': self.credentials.get_token()
                 }
 
-    def initiate_refund(
-            self,
-            refundReference,
-            transactionReference,
-            refundAmount,
-            refundReason,
-            customerNote,
-            destinationAccountNumber,
-            destinationAccountBankCode
-    ):
+    def initiate_refund(self, payload: dict):
+        """
+        This method enables you process refund to a customer for a transaction.
+
+        Webhook Events and Request Structure are sent to merchants who have configured
+        a webhook to receive notifications upon completion of a transaction refund.
+
+        Note: Webhook notifications are sent when a refund has either succeeded or failed.
+        :param payload:
+        :return:
+        """
+        required_fields = ["refundReference", "transactionReference", "refundAmount",
+                           "refundReason", "customerNote", "destinationAccountNumber",
+                           "destinationAccountBankCode"
+                           ]
+        for field in required_fields:
+            if field not in payload.keys():
+                return f"`{field}` is required in the payload"
         live = self.credentials.is_live
         if live == True or live == False:
             baseurl = GetBaseUrl(live).urls()
             url = f'{baseurl}/api/v1/refunds/initiate-refund'
-            payload = {
-                "refundReference": refundReference,
-                "transactionReference": transactionReference,
-                "refundAmount": refundAmount,
-                "refundReason": refundReason,
-                "customerNote": customerNote,
-                "destinationAccountNumber": destinationAccountNumber,
-                "destinationAccountBankCode": destinationAccountBankCode
-            }
-
-            response = requests.request("POST", url, headers=self.headers(), data = json.dumps(payload))
+            response = requests.request("POST", url, headers=self.headers(), data=json.dumps(payload))
             r_dict = json.loads(response.text)
             return r_dict
         else:
             return GetBaseUrl(live).urls()
 
-    def get_refund_status(self, transactionReference,):
+    def get_refund_status(self, transactionReference):
+        """
+        This Method enables you to get used to get the status of an initiated refund
+        :param transactionReference:
+        :return:
+        """
         live = self.credentials.is_live
         if live == True or live == False:
             baseurl = GetBaseUrl(live).urls()
@@ -808,6 +818,12 @@ class Monnify:
             return GetBaseUrl(live).urls()
 
     def get_all_refund(self, page, size):
+        """
+        This Method enables you to get all the refund made to customers
+        :param page:
+        :param size:
+        :return:
+        """
         live = self.credentials.is_live
         if live == True or live == False:
             baseurl = GetBaseUrl(live).urls()
@@ -819,46 +835,16 @@ class Monnify:
         else:
             return GetBaseUrl(live).urls()
 
-    def one_time_payment(
-            self,
-            amount,
-            customerName,
-            customerEmail,
-            paymentReference,
-            paymentDescription,
-            redirectUrl,
-            paymentMethods
-    ):
-        live = self.credentials.is_live
-        if live == True or live == False:
-            baseurl = GetBaseUrl(live).urls()
-            url = f'{baseurl}/api/v1/merchant/transactions/init-transaction'
-            famount = float(amount)
-            payload = {
-                "amount": famount,
-                "customerName": customerName,
-                "customerEmail": customerEmail,
-                "paymentReference": paymentReference,
-                "paymentDescription": paymentDescription,
-                "currencyCode": "NGN",
-                "contractCode": self.credentials.contract,
-                "redirectUrl": redirectUrl,
-                "paymentMethods": paymentMethods
-            }
-            headers = {
-                'Content-Type': 'application/json'
-            }
 
-            response = requests.request("POST", url,
-                                        auth=HTTPBasicAuth(self.credentials.apikey, self.credentials.secretKey),
-                                        headers=headers, data=json.dumps(payload))
+class Notification:
+    """
+    This Notification can only be implemented in django where the request can be passed and get
+    all the notification sent over HTTP.
+    """
+    def __init__(self, request):
+        self.request = request
 
-            r_dict = json.loads(response.text)
-            return r_dict
-        else:
-            return GetBaseUrl(live).urls()
-
-    def webhook(self, request):
-        request_json = request.body.decode('utf-8')
+    def webhook(self):
+        request_json = self.request.body.decode('utf-8')
         body = json.loads(request_json)
         return body
