@@ -54,11 +54,10 @@ reserve_account = reserve.reserve_account(
     )
 )
 print(reserve_account)
-```
+
 ## Response
-```json
 {
-  "requestSuccessful": true, 
+  "requestSuccessful": True, 
   "responseMessage": "success", 
   "responseCode": "0", 
   "responseBody": {
@@ -76,7 +75,7 @@ print(reserve_account)
     ],
     "status": "ACTIVE", 
     "createdOn": "2023-02-12 15:51:26.654",
-    "restrictPaymentSource": false
+    "restrictPaymentSource": False
   }
 }
 ```
